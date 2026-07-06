@@ -9,22 +9,19 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
-    /* On verrouille tout le corps pour empêcher le scroll */
+    /* Utilisation de dvh pour s'adapter à la barre d'outils mobile */
     html, body {
       margin: 0; padding: 0;
-      height: 100vh; /* Utilise 100% de la hauteur visible */
-      overflow: hidden; /* Empêche tout défilement */
+      height: 100dvh;
+      overflow: hidden;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
       display: flex; flex-direction: column;
     }
 
     header {
       background-color: #4a90e2; color: white;
       padding: 10px; text-align: center;
-      flex-shrink: 0; /* Ne doit pas rétrécir */
+      flex-shrink: 0;
     }
 
     header h1 {
@@ -39,15 +36,14 @@
       text-align: center;
       font-weight: bold;
       font-size: 0.9rem;
-      flex-shrink: 0; /* Ne doit pas rétrécir */
+      flex-shrink: 0;
     }
 
-    /* Le map prend tout l'espace disponible entre le haut et le bas */
     #map {
       flex-grow: 1;
       width: 100%;
       z-index: 1;
-      min-height: 0; /* Important pour que flex-grow fonctionne */
+      min-height: 0;
     }
 
     .controls {
@@ -55,7 +51,9 @@
       background: white;
       text-align: center;
       border-top: 3px solid #4a90e2;
-      flex-shrink: 0; /* Ne doit pas rétrécir */
+      flex-shrink: 0;
+      /* Utilisation standard pour gérer la barre de navigation iPhone */
+      padding-bottom: env(safe-area-inset-bottom);
     }
 
     button {
@@ -137,7 +135,7 @@
 
       setTimeout(() => { btn.innerText = "📍 Actualiser"; }, 2000);
     }, () => {
-      alert("Impossible d'accéder à la position!");
+      alert("Impossible d'accéder à la position.");
       btn.innerText = "📍 Réessayer";
     });
   });
