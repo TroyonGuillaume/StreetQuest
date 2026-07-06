@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
-    /* Utilisation de dvh pour s'adapter à la barre d'outils mobile */
+    /* On verrouille l'écran */
     html, body {
       margin: 0; padding: 0;
       height: 100dvh;
@@ -47,13 +47,13 @@
     }
 
     .controls {
-      padding: 15px;
       background: white;
       text-align: center;
       border-top: 3px solid #4a90e2;
       flex-shrink: 0;
-      /* Utilisation standard pour gérer la barre de navigation iPhone */
-      padding-bottom: env(safe-area-inset-bottom);
+      /* On augmente le padding bas pour créer une zone tampon
+         supérieure à la barre de navigation */
+      padding: 25px 15px calc(25px + env(safe-area-inset-bottom));
     }
 
     button {
@@ -101,19 +101,16 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-  // 1. Initialisation de la carte
   const map = L.map('map').setView([50.1732, 3.2327], 13);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
   }).addTo(map);
 
-  // 2. Éléments de l'interface
   const btn = document.getElementById('btn-gps');
   const banner = document.getElementById('banner-text');
   let monMarqueur = null;
 
-  // 3. Action au clic
   btn.addEventListener('click', () => {
     btn.innerText = "🔍 Recherche...";
     banner.innerText = "Je cherche ta position...";
@@ -135,7 +132,7 @@
 
       setTimeout(() => { btn.innerText = "📍 Actualiser"; }, 2000);
     }, () => {
-      alert("Impossible d'accéder à la position!");
+      alert("Impossible d'accéder à la position.");
       btn.innerText = "📍 Réessayer";
     });
   });
