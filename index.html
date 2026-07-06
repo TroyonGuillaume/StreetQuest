@@ -2,86 +2,84 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>StreetQuest</title>
 
   <!-- CSS de Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
-    body {
+    /* On verrouille tout le corps pour empêcher le scroll */
+    html, body {
       margin: 0; padding: 0;
+      height: 100vh; /* Utilise 100% de la hauteur visible */
+      overflow: hidden; /* Empêche tout défilement */
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex; flex-direction: column; height: 100vh;
-      background-color: #f4f6f9;
     }
 
-    /* En-tête coloré et captivant */
+    body {
+      display: flex; flex-direction: column;
+    }
+
     header {
       background-color: #4a90e2; color: white;
-      padding: 15px; text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-      z-index: 10;
+      padding: 10px; text-align: center;
+      flex-shrink: 0; /* Ne doit pas rétrécir */
     }
 
     header h1 {
       margin: 0;
-      font-size: 1.8rem;
-      font-weight: bold;
-      letter-spacing: 1px;
+      font-size: 1.5rem;
     }
 
-    /* Bannière de guidage claire pour les enfants */
     .mission-banner {
       background-color: #ffeaa7;
       color: #d63031;
-      padding: 10px;
+      padding: 8px;
       text-align: center;
       font-weight: bold;
-      font-size: 1.1rem;
-      box-shadow: inset 0 -2px 5px rgba(0,0,0,0.05);
-      z-index: 10;
+      font-size: 0.9rem;
+      flex-shrink: 0; /* Ne doit pas rétrécir */
     }
 
-    /* Zone de la carte prenant tout l'espace central */
-    #map { flex-grow: 1; width: 100%; z-index: 1; }
+    /* Le map prend tout l'espace disponible entre le haut et le bas */
+    #map {
+      flex-grow: 1;
+      width: 100%;
+      z-index: 1;
+      min-height: 0; /* Important pour que flex-grow fonctionne */
+    }
 
-    /* Zone des boutons en bas de l'écran tactile */
     .controls {
-      padding: 20px;
+      padding: 15px;
       background: white;
       text-align: center;
       border-top: 3px solid #4a90e2;
-      z-index: 10;
+      flex-shrink: 0; /* Ne doit pas rétrécir */
     }
 
-    /* Gros bouton ludique, large et très facile à actionner */
     button {
       background-color: #2ecc71;
       color: white;
       border: none;
-      padding: 18px 45px;
-      font-size: 1.3rem;
+      padding: 15px 30px;
+      font-size: 1.1rem;
       font-weight: bold;
       border-radius: 50px;
       cursor: pointer;
-      box-shadow: 0 6px 12px rgba(46, 204, 113, 0.4);
-      transition: all 0.1s ease;
-      width: 90%;
-      max-width: 360px;
+      box-shadow: 0 4px 8px rgba(46, 204, 113, 0.4);
+      width: 100%;
+      max-width: 320px;
     }
 
     button:active {
       transform: scale(0.95);
-      box-shadow: 0 3px 6px rgba(46, 204, 113, 0.4);
     }
 
-    /* Style de la bulle d'info agrandie pour une lecture confortable */
     .leaflet-popup-content {
-      font-size: 1.2rem !important;
+      font-size: 1.1rem;
       font-weight: bold;
       text-align: center;
-      color: #2c3e50;
     }
   </style>
 </head>
@@ -92,7 +90,7 @@
 </header>
 
 <div class="mission-banner" id="banner-text">
-  👉 Appuie sur le gros bouton vert pour te repérer !
+  Appuie sur le bouton pour te repérer !
 </div>
 
 <div id="map"></div>
@@ -105,7 +103,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-  // 1. Initialisation de la carte centrée par défaut
+  // 1. Initialisation de la carte
   const map = L.map('map').setView([50.1732, 3.2327], 13);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -117,47 +115,30 @@
   const banner = document.getElementById('banner-text');
   let monMarqueur = null;
 
-  // 3. Action au clic sur le bouton
+  // 3. Action au clic
   btn.addEventListener('click', () => {
-    btn.style.backgroundColor = "#e67e22"; // Devient orange pendant la recherche
-    btn.innerText = "🔍 Recherche en cours...";
-    banner.innerText = "Attends un petit instant, la boussole tourne... 🧭";
-    banner.style.backgroundColor = "#e1f5fe";
-    banner.style.color = "#0288d1";
+    btn.innerText = "🔍 Recherche...";
+    banner.innerText = "Je cherche ta position...";
 
     navigator.geolocation.getCurrentPosition((position) => {
       const lat = position.coords.latitude;
       const lon = position.coords.longitude;
 
-      // Zoom serré sur la position pour un effet immersif
       map.setView([lat, lon], 17);
 
-      // Nettoyage de l'ancien marqueur
       if (monMarqueur) map.removeLayer(monMarqueur);
 
-      // Placement du nouveau marqueur avec ouverture automatique de la bulle
       monMarqueur = L.marker([lat, lon]).addTo(map)
               .bindPopup('🎉 Bravo ! Tu es ici !')
               .openPopup();
 
-      // Rétablissement des boutons avec des messages de succès stimulants
-      btn.style.backgroundColor = "#2ecc71";
-      btn.innerText = "✅ Position trouvée !";
-      banner.innerText = "🌟 Mission accomplie ! Te voilà sur la carte !";
-      banner.style.backgroundColor = "#d4edda";
-      banner.style.color = "#155724";
+      btn.innerText = "📍 Position trouvée !";
+      banner.innerText = "🌟 Mission accomplie !";
 
-      setTimeout(() => {
-        btn.innerText = "📍 Actualiser ma position";
-      }, 3000);
+      setTimeout(() => { btn.innerText = "📍 Actualiser"; }, 2000);
     }, () => {
-      // Gestion claire de l'erreur
-      alert("Zut ! Je n'ai pas l'autorisation d'accéder au GPS. Vérifie tes paramètres !");
-      btn.style.backgroundColor = "#2ecc71";
-      btn.innerText = "📍 Essayer à nouveau";
-      banner.innerText = "❌ Erreur : Pense à activer ton GPS !";
-      banner.style.backgroundColor = "#f8d7da";
-      banner.style.color = "#721c24";
+      alert("Impossible d'accéder à la position.");
+      btn.innerText = "📍 Réessayer";
     });
   });
 </script>
