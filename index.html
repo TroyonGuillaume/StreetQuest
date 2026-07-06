@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StreetQuest - Détection</title>
+</head>
+<body>
+<h1>Bienvenue sur StreetQuest</h1>
+<button id="btn-gps">Obtenir ma position</button>
+<p id="coordonnees">En attente...</p>
+
+<script>
+  const btn = document.getElementById('btn-gps');
+  const output = document.getElementById('coordonnees');
+
+  btn.addEventListener('click', () => {
+    if (!navigator.geolocation) {
+      output.innerHTML = "Votre navigateur ne supporte pas la géolocalisation.";
+      return;
+    }
+
+    output.innerHTML = "Localisation en cours...";
+
+    navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const lat = position.coords.latitude;
+              const lon = position.coords.longitude;
+              output.innerHTML = `Latitude : ${lat} <br> Longitude : ${lon}`;
+            },
+            () => {
+              output.innerHTML = "Impossible de récupérer votre position.";
+            }
+    );
+  });
+</script>
+</body>
+</html>
