@@ -3,139 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>StreetQuest</title>
-
-  <!-- CSS de Leaflet -->
+  <title>StreetQuest Cambrai</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
-  <style>
-    /* On verrouille l'écran */
-    html, body {
-      margin: 0; padding: 0;
-      height: 100dvh;
-      overflow: hidden;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex; flex-direction: column;
-    }
-
-    header {
-      background-color: #4a90e2; color: white;
-      padding: 10px; text-align: center;
-      flex-shrink: 0;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 1.5rem;
-    }
-
-    .mission-banner {
-      background-color: #ffeaa7;
-      color: #d63031;
-      padding: 8px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 0.9rem;
-      flex-shrink: 0;
-    }
-
-    #map {
-      flex-grow: 1;
-      width: 100%;
-      z-index: 1;
-      min-height: 0;
-    }
-
-    .controls {
-      background: white;
-      text-align: center;
-      border-top: 3px solid #4a90e2;
-      flex-shrink: 0;
-      /* On augmente le padding bas pour créer une zone tampon
-         supérieure à la barre de navigation */
-      padding: 25px 15px calc(25px + env(safe-area-inset-bottom));
-    }
-
-    button {
-      background-color: #2ecc71;
-      color: white;
-      border: none;
-      padding: 15px 30px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 4px 8px rgba(46, 204, 113, 0.4);
-      width: 100%;
-      max-width: 320px;
-    }
-
-    button:active {
-      transform: scale(0.95);
-    }
-
-    .leaflet-popup-content {
-      font-size: 1.1rem;
-      font-weight: bold;
-      text-align: center;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-  <h1>🚀 StreetQuest</h1>
-</header>
-
-<div class="mission-banner" id="banner-text">
-  Appuie sur le bouton pour te repérer !
+<!-- VUE 1 : MENU (HOME) -->
+<div id="home-view" class="view active">
+  <header><h1>🚀 StreetQuest</h1></header>
+  <div style="padding: 20px;">
+    <h2>Choisis ta chasse :</h2>
+    <div id="hunt-list"></div>
+  </div>
 </div>
 
-<div id="map"></div>
+<!-- VUE 2 : JEU -->
+<div id="game-view" class="view">
+  <header>
+    <button class="back-btn" onclick="showHome()">⬅️</button>
+    <h1>StreetQuest</h1>
+  </header>
+  <div class="mission-banner" id="banner-text">Trouve le trésor !</div>
+  <div id="map"></div>
 
-<div class="controls">
-  <button id="btn-gps">📍 Trouver ma position</button>
+  <div id="quiz-overlay">
+    <h2 id="q-title">Énigme trouvée !</h2>
+    <p id="q-text"></p>
+    <input type="text" id="q-answer" placeholder="Ta réponse...">
+    <button id="btn-submit" style="margin-top:20px;">Valider</button>
+  </div>
+
+  <div class="controls"><button id="btn-gps">📍 Vérifier ma position</button></div>
 </div>
 
-<!-- JS de Leaflet -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<script>
-  const map = L.map('map').setView([50.1732, 3.2327], 13);
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-  }).addTo(map);
-
-  const btn = document.getElementById('btn-gps');
-  const banner = document.getElementById('banner-text');
-  let monMarqueur = null;
-
-  btn.addEventListener('click', () => {
-    btn.innerText = "🔍 Recherche...";
-    banner.innerText = "Je cherche ta position...";
-
-    navigator.geolocation.getCurrentPosition((position) => {
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
-
-      map.setView([lat, lon], 17);
-
-      if (monMarqueur) map.removeLayer(monMarqueur);
-
-      monMarqueur = L.marker([lat, lon]).addTo(map)
-              .bindPopup('🎉 Bravo ! Tu es ici !')
-              .openPopup();
-
-      btn.innerText = "📍 Position trouvée !";
-      banner.innerText = "🌟 Mission accomplie !";
-
-      setTimeout(() => { btn.innerText = "📍 Actualiser"; }, 2000);
-    }, () => {
-      alert("Impossible d'accéder à la position.");
-      btn.innerText = "📍 Réessayer";
-    });
-  });
-</script>
+<script src="script.js"></script>
 </body>
 </html>
